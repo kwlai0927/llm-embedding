@@ -1,11 +1,10 @@
 import requests
-import json
 import sys
 
 def test_embedding():
     # 測試健康檢查端點
     try:
-        health_response = requests.get("http://localhost:8000/healthz")
+        health_response = requests.get("http://localhost:80/healthz")
         print("健康檢查結果:", health_response.json())
         if health_response.status_code != 200 or health_response.json().get("status") != "ok":
             print("健康檢查未通過，結束測試。")
@@ -19,7 +18,7 @@ def test_embedding():
     payload = {"text": test_text}
     
     response = requests.post(
-        "http://localhost:8000/embed",
+        "http://localhost:80/embed",
         json=payload
     )
     
