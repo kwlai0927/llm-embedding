@@ -19,7 +19,7 @@ jobs:
       id-token: write
       contents: read
     environment:
-      name: ${{ inputs.environment }}
+      name: dev
       url: https://github.com
     steps:
       - name: Checkout code
