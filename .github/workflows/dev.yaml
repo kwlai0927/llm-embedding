@@ -15,6 +15,9 @@ jobs:
   build-and-push:
     needs: version
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     environment:
       name: ${{ inputs.environment }}
       url: https://github.com
