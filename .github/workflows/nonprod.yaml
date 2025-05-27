@@ -48,5 +48,5 @@ jobs:
               "repository": "${{ github.repository }}",
               "image-tag": "${{ needs.version.outputs.version }}",
               "environment": "nonprod",
-              "namespace": "llm"
+              "namespace": "nonprod"
             }
