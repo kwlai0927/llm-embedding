@@ -1,16 +1,13 @@
-# Alpha 是內測階段，當features/* 或是 bugfix/*分支，使用pull request 方式合到release/*時，打包Alpha進行部署並通知QAteam測試
-name: Alpha # 工作流程的名稱
+# dev 是開發階段，打tag部署
+name: Dev # 工作流程的名稱
 
 on: # 觸發條件
-  pull_request: # 當有 pull_request 事件時觸發
-    branches: # 僅針對特定分支
-      - releases/**
-    types:
-      - closed # PR 關閉才會執行
-
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+-nonprod.*'
 jobs:
   version: # 工作名稱
-    uses: kwlai0927/workflows/.github/workflows/tag-alpha.yaml@main
+    uses: kwlai0927/workflows/.github/workflows/tag-dev.yaml@main
     permissions:
       contents: write
     secrets: inherit
@@ -18,8 +15,11 @@ jobs:
   build-and-push:
     needs: version
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     environment:
-      name: alpha
+      name: nonprod
       url: https://github.com
     steps:
       - name: Checkout code
@@ -47,6 +47,6 @@ jobs:
             {
               "repository": "${{ github.repository }}",
               "image-tag": "${{ needs.version.outputs.version }}",
-              "environment": "alpha",
+              "environment": "nonprod",
               "namespace": "llm"
             }
