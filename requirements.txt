@@ -1,7 +1,4 @@
 fastapi==0.109.2
 uvicorn==0.27.1
 sentence-transformers==2.5.1
-pydantic==2.6.1
-grpcio==1.59.3
-grpcio-tools==1.59.3
-python-dotenv==1.0.0 
+pydantic==2.6.1 
