@@ -1,0 +1,47 @@
+name: Beta # 工作流程的名稱
+
+on: # 觸發條件
+  workflow_dispatch:
+
+jobs:
+  version: # 工作名稱
+    uses: kwlai0927/workflows/.github/workflows/tag-beta.yaml@main
+    permissions:
+      contents: write
+    secrets: inherit
+
+  build-and-push:
+    needs: version
+    runs-on: ubuntu-latest
+    environment:
+      name: beta
+      url: https://github.com
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Build and Push to ECR
+        uses: kwlai0927/action-ecr-push@main
+        with:
+          role-to-assume: ${{ secrets.AWS_NONPROD_ARTIFAT_ROLE_ARN }}
+          ecr-repository: ${{ github.repository }}
+          image-tag: ${{ needs.version.outputs.version }}
+
+  helm:
+    needs:
+      - version
+      - build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Repository Dispatch
+        uses: peter-evans/repository-dispatch@v3
+        with:
+          token: ${{ secrets.DISPATCH_DEPLOYMENT_TOKEN }}
+          repository: kwlai0927/nonprod-deployment
+          event-type: kwlai0927/srv-chart
+          client-payload: |
+            {
+              "repository": "${{ github.repository }}",
+              "stage": "beta",
+              "version": "${{ needs.version.outputs.version }}",
+              "namespace": "llm"
+            }
