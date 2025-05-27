@@ -27,7 +27,7 @@ jobs:
       - name: Build and Push to ECR
         uses: kwlai0927/action-ecr-push@main
         with:
-          role-to-assume: ${{ secrets.AWS_NONPROD_ARTIFAT_ROLE_ARN }}
+          role-to-assume: ${{ secrets.AWS_NONPROD_ARTIFACT_ROLE_ARN }}
           ecr-repository: ${{ github.repository }}
           image-tag: ${{ needs.version.outputs.version }}
 
@@ -40,13 +40,13 @@ jobs:
       - name: Repository Dispatch
         uses: peter-evans/repository-dispatch@v3
         with:
-          token: ${{ secrets.DISPATCH_DEPLOYMENT_TOKEN }}
+          token: ${{ secrets.DISPATCH_NONPROD_DEPLOYMENT_TOKEN }}
           repository: kwlai0927/nonprod-deployment
           event-type: kwlai0927/srv-chart
           client-payload: |
             {
               "repository": "${{ github.repository }}",
-              "stage": "dev",
-              "version": "${{ needs.version.outputs.version }}",
+              "image-tag": "${{ needs.version.outputs.version }}",
+              "environment": "dev",
               "namespace": "llm"
             }
